@@ -2,6 +2,8 @@ package com.lukaspaczos.currencyconverter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private Context contextMain;
     private static final double GBPPLN_RATE = 5.17;
     private double input = 0;
+    private SharedPreferences sharedPref;
+    public String currencyFrom;
+    public String currencyTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         contextMain = this;
+
+        sharedPref = contextMain.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
+        getSharedPreferences();
+
+        Log.i("Preferences From", sharedPref.getString(getString(R.string.preference_from), getResources().getString(R.string.default_from)));
+        Log.i("Preferences To", sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to)));
+
+        setViews();
 
         calculateOutcome(input);
 
@@ -78,6 +92,53 @@ public class MainActivity extends AppCompatActivity {
         double outcome = input * GBPPLN_RATE;
         TextView amountOutcome = (TextView) findViewById(R.id.currency_outcome);
         amountOutcome.setText(String.format("%.2f", outcome));
+    }
+
+    private void getSharedPreferences() {
+        currencyFrom = sharedPref.getString(getString(R.string.preference_from), getResources().getString(R.string.default_from));
+        currencyTo = sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to));
+    }
+
+    private void setViews() {
+        TextView currencyFromTv = (TextView) findViewById(R.id.currency_from);
+        currencyFromTv.setText(currencyFrom);
+        currencyFromTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(contextMain, ChooseCurrencyActivity.class);
+                intent.putExtra("TYPE", 0);
+                startActivityForResult(intent, 1);
+            }
+        });
+
+        TextView currencyToTv = (TextView) findViewById(R.id.currency_to);
+        currencyToTv.setText(currencyTo);
+        currencyToTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(contextMain, ChooseCurrencyActivity.class);
+                intent.putExtra("TYPE", 1);
+                startActivityForResult(intent, 1);
+            }
+        });
+
+        TextView currencyToHintTv = (TextView) findViewById(R.id.currency_to_hint);
+        currencyToHintTv.setText(currencyTo);
+
+        TextView currencyFromHintTv = (TextView) findViewById(R.id.currency_from_hint);
+        currencyFromHintTv.setText(currencyFrom);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("requestCode", Integer.toString(requestCode));
+        Log.i("resultCode", Integer.toString(resultCode));
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                getSharedPreferences();
+                setViews();
+            }
+        }
     }
 
     @Override
