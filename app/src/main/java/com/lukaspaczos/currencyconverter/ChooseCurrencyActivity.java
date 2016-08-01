@@ -43,7 +43,7 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
             type = extras.getInt("TYPE");
         }
 
-        currencies = Arrays.asList(getResources().getStringArray(R.array.currencies));
+        currencies = Arrays.asList(getResources().getStringArray(R.array.currencies_short));
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, currencies);
 
         ListView listView = (ListView) findViewById(R.id.list_currencies);
@@ -74,8 +74,10 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
         if (type == CHANGE_FROM) {
             editor.putString(getString(R.string.preference_from), newCurrency);
             Log.i("Change from", "done");
-        } else
+        } else {
             editor.putString(getString(R.string.preference_to), newCurrency);
+            Log.i("Change to", "done");
+        }
         editor.apply();
     }
 }

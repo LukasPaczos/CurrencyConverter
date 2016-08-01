@@ -1,18 +1,28 @@
 <resources>
     <string name="app_name">Currency Converter</string>
     <string name="action_settings">Settings</string>
+    <string name="action_update">Update Rates</string>
 
     <string name="converter_choose_amount">How much to convert?</string>
 
-    <string-array name="currencies">
-        <item>PLN - Polish Zloty</item>
-        <item>GBP - British Pound</item>
+    <string-array name="currencies_short">
+        <item>PLN</item>
+        <item>GBP</item>
+        <item>EUR</item>
+        <item>USD</item>
+    </string-array>
+
+    <string-array name="currencies_long">
+        <item>Polish Zloty</item>
+        <item>British Pound</item>
         <item>EURO</item>
-        <item>USD - American Dollar</item>
+        <item>American Dollar</item>
     </string-array>
 
     <string name="preference_from">preference_from</string>
     <string name="preference_to">preference_to</string>
+    <string name="date">date</string>
     <string name="default_from">GBP</string>
     <string name="default_to">PLN</string>
+    <string name="default_date"> </string>
 </resources>

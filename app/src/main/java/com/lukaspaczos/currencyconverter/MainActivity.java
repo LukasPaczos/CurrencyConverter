@@ -18,9 +18,12 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         contextMain = this;
 
-        RatesUpdate.update(this);
+        //TODO uncomment when done
+        //fillCurriencies();
 
         sharedPref = contextMain.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
         getSharedPreferences();
@@ -50,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i("Preferences To", sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to)));
 
         setViews();
-
-        calculateOutcome(input);
 
         TextView startingAmount = (TextView) findViewById(R.id.currency_starting);
         startingAmount.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+        calculateOutcome(input);
     }
 
     private void calculateOutcome(double input) {
@@ -129,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
         TextView currencyFromHintTv = (TextView) findViewById(R.id.currency_from_hint);
         currencyFromHintTv.setText(currencyFrom);
+
+        TextView date = (TextView) findViewById(R.id.date);
+        date.setText(sharedPref.getString(getString(R.string.date), getResources().getString(R.string.default_date)));
     }
 
     @Override
@@ -161,7 +167,21 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_update) {
+            CheckDownloadComplete.isDownloadComplete = false;
+            RatesUpdate.update(this);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void fillCurriencies() {
+        List<String> shortNames = Arrays.asList(getResources().getStringArray(R.array.currencies_short));
+        List<String> longNames = Arrays.asList(getResources().getStringArray(R.array.currencies_long));
+        for (int i = 0; i < shortNames.size(); i++) {
+            double rate;
+            //TODO get rate for every currency
+        }
     }
 }
