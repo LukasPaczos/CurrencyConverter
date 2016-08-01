@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         contextMain = this;
 
+        RatesUpdate.update(this);
+
         sharedPref = contextMain.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
         getSharedPreferences();
 
