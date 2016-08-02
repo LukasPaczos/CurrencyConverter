@@ -6,29 +6,26 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import java.io.File;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
+//TODO przepisac waluty
+//TODO zachowywac kwote poprzednia wpisana + przycisk reset
+//TODO szukac bugow
 public class MainActivity extends AppCompatActivity {
 
-    private Context contextMain;
+    public static Context contextMain;
     private static final double GBPPLN_RATE = 5.17;
     private double input = 0;
     private SharedPreferences sharedPref;
@@ -44,14 +41,19 @@ public class MainActivity extends AppCompatActivity {
 
         contextMain = this;
 
-        //TODO uncomment when done
-        //fillCurriencies();
-
         sharedPref = contextMain.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
         getSharedPreferences();
 
         Log.i("Preferences From", sharedPref.getString(getString(R.string.preference_from), getResources().getString(R.string.default_from)));
         Log.i("Preferences To", sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to)));
+
+        File xmlFile = new File(this.getExternalFilesDir(null).toString() + "/Download/" + RatesUpdate.FILE_NAME);
+        if (xmlFile.exists()) {
+            RatesUpdate.parse(this);
+        } else {
+            RatesUpdate.update(this);
+        }
+
 
         setViews();
 
@@ -81,8 +83,10 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        input = Double.valueOf(inputView.getText().toString());
-                        calculateOutcome(input);
+                        if (!inputView.getText().toString().equals("")) {
+                            input = Double.valueOf(inputView.getText().toString());
+                            calculateOutcome(input);
+                        }
                     }
                 });
                 alertDialog.show();
@@ -92,9 +96,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void calculateOutcome(double input) {
+        getSharedPreferences();
+        double rateFrom = 1;
+        double rateTo = 1;
+        for (Currency c: Currency.list) {
+            if (c.getShortName().equals(currencyFrom)) {
+                rateFrom = c.getRate();
+            }
+            if (c.getShortName().equals(currencyTo)) {
+                rateTo = c.getRate();
+            }
+        }
+
+        double inputInEuro = input / rateFrom;
+        double outcome = inputInEuro * rateTo;
+
         TextView amountFrom = (TextView) findViewById(R.id.currency_starting);
         amountFrom.setText(String.format("%.2f", input));
-        double outcome = input * GBPPLN_RATE;
         TextView amountOutcome = (TextView) findViewById(R.id.currency_outcome);
         amountOutcome.setText(String.format("%.2f", outcome));
     }
@@ -145,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 getSharedPreferences();
                 setViews();
+                calculateOutcome(input);
             }
         }
     }
@@ -174,14 +193,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void fillCurriencies() {
-        List<String> shortNames = Arrays.asList(getResources().getStringArray(R.array.currencies_short));
-        List<String> longNames = Arrays.asList(getResources().getStringArray(R.array.currencies_long));
-        for (int i = 0; i < shortNames.size(); i++) {
-            double rate;
-            //TODO get rate for every currency
-        }
     }
 }

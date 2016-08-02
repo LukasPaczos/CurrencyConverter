@@ -17,7 +17,7 @@ public class CheckDownloadComplete extends BroadcastReceiver {
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
             isDownloadComplete = true;
             Log.i("Download completed?", String.valueOf(isDownloadComplete));
-            RatesUpdate.parse();
+            RatesUpdate.parse(MainActivity.contextMain);
         }
     }
 }

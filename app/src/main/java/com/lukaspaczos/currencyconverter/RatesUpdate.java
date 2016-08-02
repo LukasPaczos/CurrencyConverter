@@ -46,9 +46,7 @@ public class RatesUpdate {
         downloadManager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        //TODO remove download notifications
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE
-                | DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        Toast.makeText(context, "Downloading exchange rates.", Toast.LENGTH_SHORT).show();
 
         //Setting title of request
         request.setTitle("Current exchange rates");
@@ -76,7 +74,7 @@ public class RatesUpdate {
         return file.delete();
     }
 
-    public static void parse() {
+    public static void parse(Context context) {
         /*int i = 0;
         CheckDownloadComplete.isDownloadComplete = false;
         while (!CheckDownloadComplete.isDownloadComplete) {
@@ -88,7 +86,6 @@ public class RatesUpdate {
         }*/
         Log.i("XMLParsing", "started");
         try {
-            String date = "";
             File xmlFile = new File(context.getExternalFilesDir(null).toString() + "/Download/" + FILE_NAME);
             FileReader fileReader = new FileReader(xmlFile);
             XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
@@ -100,6 +97,7 @@ public class RatesUpdate {
                 switch (event) {
                     case XmlPullParser.START_TAG:
                         if (name.equals("Cube")) {
+                            String date = "";
                             date = myParser.getAttributeValue(null, "time");
                             if (date != null) {
                                 Log.i("Date from file", date);
@@ -110,6 +108,20 @@ public class RatesUpdate {
                                 /*View rootView = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
                                 TextView dateTv = (TextView) rootView.findViewById(R.id.date);
                                 dateTv.setText(date);*/
+                            }
+                            else {
+                                String shortName = "";
+                                String rate = "";
+                                shortName = myParser.getAttributeValue(null, "currency");
+                                rate = myParser.getAttributeValue(null, "rate");
+                                if (shortName != null && rate != null) {
+                                    Log.i("shortName", shortName);
+                                    Log.i("rate", rate);
+                                    new Currency(shortName, "", Double.valueOf(rate));
+                                } else {
+                                    Log.i("shortName", "null");
+                                    Log.i("rate", "null");
+                                }
                             }
                         }
                         break;
