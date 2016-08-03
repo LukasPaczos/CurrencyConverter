@@ -6,17 +6,75 @@
     <string name="converter_choose_amount">How much to convert?</string>
 
     <string-array name="currencies_short">
-        <item>PLN</item>
         <item>GBP</item>
         <item>EUR</item>
         <item>USD</item>
+        <item>PLN</item>
+        <item>JPY</item>
+        <item>BGN</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>HUF</item>
+        <item>RON</item>
+        <item>SEK</item>
+        <item>CHF</item>
+        <item>NOK</item>
+        <item>HRK</item>
+        <item>RUB</item>
+        <item>TRY</item>
+        <item>AUD</item>
+        <item>BRL</item>
+        <item>CAD</item>
+        <item>CNY</item>
+        <item>HKD</item>
+        <item>ILS</item>
+        <item>INR</item>
+        <item>KRW</item>
+        <item>MXN</item>
+        <item>MYR</item>
+        <item>NZD</item>
+        <item>PHP</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>ZAR</item>
     </string-array>
 
     <string-array name="currencies_long">
-        <item>Polish Zloty</item>
-        <item>British Pound</item>
         <item>EURO</item>
         <item>American Dollar</item>
+        <item>Japanese Yen</item>
+        <item>Bulgarian Lev</item>
+        <item>Czech Koruna</item>
+        <item>Danish Krone</item>
+        <item>British Pound</item>
+        <item>Hungarian Forint</item>
+        <item>Polish Zloty</item>
+        <item>Romanian Ieu</item>
+        <item>Swedish Krona</item>
+        <item>Swiss Frank</item>
+        <item>Norwegian Krone</item>
+        <item>Croatian Kuna</item>
+        <item>Russian Ruble</item>
+        <item>Turkish Lira</item>
+        <item>Turkish Lira</item>
+        <item>Australian Dollar</item>
+        <item>Australian Dollar</item>
+        <item>Brazilian Real</item>
+        <item>Canadian Dollar</item>
+        <item>Chinese Yuan</item>
+        <item>Hong Kong Dollar</item>
+        <item>Indonesian Rupiah</item>
+        <item>Israel new Shekel</item>
+        <item>Indian Rupee</item>
+        <item>South Korean Won</item>
+        <item>Mexican Peso</item>
+        <item>Malaysian Ringgit</item>
+        <item>New Zealand Dollar</item>
+        <item>Philippine Peso</item>
+        <item>Singapore Dollar</item>
+        <item>Thai Baht</item>
+        <item>South African Rand</item>
+
     </string-array>
 
     <string name="preference_from">preference_from</string>

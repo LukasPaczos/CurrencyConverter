@@ -12,7 +12,25 @@ public class Currency {
         this.shortName = shortName;
         this.longName = longName;
         this.rate = rate;
-        list.add(this);
+        addToList(this);
+    }
+
+    private void addToList(Currency currency) {
+        boolean exists = false;
+        Currency existing = null;
+        for (Currency c : list) {
+            if (c.getShortName().equals(currency.getShortName())) {
+                exists = true;
+                existing = c;
+            }
+        }
+        if (!exists) {
+            list.add(currency);
+        } else {
+            if (existing.rate != currency.rate) {
+                existing.rate = currency.rate;
+            }
+        }
     }
 
     public String getShortName() {
@@ -25,5 +43,14 @@ public class Currency {
 
     public double getRate() {
         return rate;
+    }
+
+    public void setLongName(String longName) {
+        this.longName = longName;
+    }
+
+    @Override
+    public String toString() {
+        return this.getShortName() + " - " + this.getLongName();
     }
 }

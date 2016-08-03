@@ -18,6 +18,9 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RatesUpdate {
     private static DownloadManager downloadManager;
@@ -92,6 +95,8 @@ public class RatesUpdate {
             XmlPullParser myParser = xmlFactoryObject.newPullParser();
             myParser.setInput(fileReader);
             int event = myParser.getEventType();
+            //adding euro, which is not in charts
+            new Currency("EUR", "EURO", 1);
             while (event != XmlPullParser.END_DOCUMENT) {
                 String name = myParser.getName();
                 switch (event) {
@@ -140,8 +145,17 @@ public class RatesUpdate {
             Toast.makeText(context, "Error updating exchange rates.(IOE)", Toast.LENGTH_SHORT).show();
             Log.i("IOException", e.getMessage());
         }
+
+        List<String> longNames = Arrays.asList(context.getResources().getStringArray(R.array.currencies_long));
+        int i = 0;
+        for (Currency c: Currency.list) {
+            if (longNames.get(i) != null) {
+                c.setLongName(longNames.get(i));
+            }
+            i++;
+        }
+
         Log.i("XMLParsing", "finished");
         Log.i("RatesUpdate", "finished");
-        Toast.makeText(context, "Update finished.", Toast.LENGTH_SHORT).show();
     }
 }

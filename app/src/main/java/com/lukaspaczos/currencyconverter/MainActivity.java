@@ -13,20 +13,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.Locale;
 
-
-//TODO przepisac waluty
-//TODO zachowywac kwote poprzednia wpisana + przycisk reset
-//TODO szukac bugow
+//TODO find bugs
 public class MainActivity extends AppCompatActivity {
 
     public static Context contextMain;
-    private static final double GBPPLN_RATE = 5.17;
     private double input = 0;
     private SharedPreferences sharedPref;
     public String currencyFrom;
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         startingAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(contextMain);
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(contextMain);
                 alertDialog.setTitle(R.string.converter_choose_amount);
                 final EditText inputView = new EditText(MainActivity.this);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -71,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 inputView.setSingleLine(true);
                 inputView.setMaxLines(1);
                 inputView.setLines(1);
+                inputView.setHint(String.format(Locale.US, "%.2f", input));
                 inputView.setRawInputType(Configuration.KEYBOARD_12KEY);
                 alertDialog.setView(inputView);
                 alertDialog.setCancelable(true);
@@ -89,7 +88,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-                alertDialog.show();
+                //reset button doesnt work yet
+                /*alertDialog.setNeutralButton("Reset", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        inputView.setText("");
+                    }
+                });*/
+                AlertDialog dialog = alertDialog.create();
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                dialog.show();
+
             }
         });
         calculateOutcome(input);
@@ -112,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
         double outcome = inputInEuro * rateTo;
 
         TextView amountFrom = (TextView) findViewById(R.id.currency_starting);
-        amountFrom.setText(String.format("%.2f", input));
+        amountFrom.setText(String.format(Locale.US, "%.2f", input));
         TextView amountOutcome = (TextView) findViewById(R.id.currency_outcome);
-        amountOutcome.setText(String.format("%.2f", outcome));
+        amountOutcome.setText(String.format(Locale.US, "%.2f", outcome));
     }
 
     private void getSharedPreferences() {

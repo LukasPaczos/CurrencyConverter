@@ -20,8 +20,7 @@ import java.util.List;
 public class ChooseCurrencyActivity extends AppCompatActivity {
 
     private Context contextChooseCurrencyActivity;
-    private ArrayAdapter<String> adapter;
-    private List<String> currencies;
+    private ArrayAdapter<Currency> adapter;
     private SharedPreferences sharedPref;
     private static final int CHANGE_FROM = 0;
     private static final int CHANGE_TO = 1;
@@ -43,24 +42,14 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
             type = extras.getInt("TYPE");
         }
 
-        currencies = Arrays.asList(getResources().getStringArray(R.array.currencies_short));
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, currencies);
+        adapter = new ArrayAdapter<Currency>(this, android.R.layout.simple_list_item_1, Currency.list);
 
         ListView listView = (ListView) findViewById(R.id.list_currencies);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                StringBuilder sb = new StringBuilder();
-                String string = (String) adapterView.getItemAtPosition(i);
-                if (!string.equals("EURO")) {
-                    char[] charArray = string.toCharArray();
-                    for (int j = 0; j < 3; j++)
-                        sb.append(charArray[j]);
-                } else {
-                    sb.append("EURO");
-                }
-                String newCurrency = sb.toString();
+                String newCurrency = ((Currency)adapterView.getItemAtPosition(i)).getShortName();
                 changeCurrency(newCurrency, type);
                 Intent data = new Intent();
                 setResult(RESULT_OK, data);
