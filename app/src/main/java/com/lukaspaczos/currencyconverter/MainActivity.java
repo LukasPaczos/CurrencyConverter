@@ -210,7 +210,27 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_about) {
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle(" ");
+            final TextView inputView = new TextView(MainActivity.this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            inputView.setText(getString(R.string.about_text));
+            inputView.setLayoutParams(lp);
+            inputView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            inputView.setTextSize(15);
+            alertDialog.setView(inputView);
+            alertDialog.setCancelable(true);
+            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            AlertDialog dialog = alertDialog.create();
+            dialog.show();
             return true;
         }
         if (id == R.id.action_update) {
