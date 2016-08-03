@@ -50,6 +50,7 @@
                         android:textSize="20sp" />
 
                     <ImageView
+                        android:id="@+id/swap_currencies"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"

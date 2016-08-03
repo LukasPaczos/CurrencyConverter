@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -99,6 +101,22 @@ public class MainActivity extends AppCompatActivity {
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 dialog.show();
 
+            }
+        });
+
+        ImageView swapView = (ImageView) findViewById(R.id.swap_currencies);
+        swapView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.preference_from), currencyTo);
+                Log.i("Change from", "done");
+                editor.putString(getString(R.string.preference_to), currencyFrom);
+                Log.i("Change to", "done");
+                editor.apply();
+                getSharedPreferences();
+                setViews();
+                calculateOutcome(input);
             }
         });
         calculateOutcome(input);

@@ -1,14 +1,13 @@
 package com.lukaspaczos.currencyconverter;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -18,7 +17,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,19 +35,10 @@ public class RatesUpdate {
     private static long downloadData(Uri uri, Context context) {
         long downloadReference;
 
-        Log.i("File exists", Boolean.toString(fileExists(FILE_NAME)));
-        if (fileExists(FILE_NAME)) {
-            if (deleteFile(FILE_NAME)) {
-                Log.i("File deleted", "true");
-            } else {
-                Log.i("File deleted", "false");
-            }
-        }
         // Create request for android download manager
         downloadManager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        Toast.makeText(context, "Downloading exchange rates.", Toast.LENGTH_SHORT).show();
 
         //Setting title of request
         request.setTitle("Current exchange rates");
@@ -60,8 +49,25 @@ public class RatesUpdate {
         //Set the local destination for the downloaded file to a path within the application's external files directory
         request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, FILE_NAME);
 
-        //Enqueue download and save into referenceId
-        downloadReference = downloadManager.enqueue(request);
+        if (isNetworkAvailable()) {
+            Log.i("File exists", Boolean.toString(fileExists(FILE_NAME)));
+            if (fileExists(FILE_NAME)) {
+                if (deleteFile(FILE_NAME)) {
+                    Log.i("File deleted", "true");
+                } else {
+                    Log.i("File deleted", "false");
+                }
+            }
+            //Enqueue download and save into referenceId
+            downloadReference = downloadManager.enqueue(request);
+            Log.i("Download", "started");
+            Toast.makeText(context, "Downloading exchange rates.", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.i("Download", "no internet connection");
+            Log.i("Update", "failed");
+            downloadReference = -1;
+            Toast.makeText(context, "Update failed, no Internet connection.", Toast.LENGTH_SHORT).show();
+        }
 
         return downloadReference;
     }
@@ -78,15 +84,6 @@ public class RatesUpdate {
     }
 
     public static void parse(Context context) {
-        /*int i = 0;
-        CheckDownloadComplete.isDownloadComplete = false;
-        while (!CheckDownloadComplete.isDownloadComplete) {
-
-        }
-        if (i >= 100000) {
-            Log.i("Downloading", "error");
-            Toast.makeText(context, "Couldn't download new exchange rates.", Toast.LENGTH_SHORT).show();
-        }*/
         Log.i("XMLParsing", "started");
         try {
             File xmlFile = new File(context.getExternalFilesDir(null).toString() + "/Download/" + FILE_NAME);
@@ -110,9 +107,6 @@ public class RatesUpdate {
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString(context.getString(R.string.date), date);
                                 editor.apply();
-                                /*View rootView = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-                                TextView dateTv = (TextView) rootView.findViewById(R.id.date);
-                                dateTv.setText(date);*/
                             }
                             else {
                                 String shortName = "";
@@ -157,5 +151,12 @@ public class RatesUpdate {
 
         Log.i("XMLParsing", "finished");
         Log.i("RatesUpdate", "finished");
+    }
+
+    private static boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
