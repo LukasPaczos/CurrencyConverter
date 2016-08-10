@@ -1,5 +1,6 @@
 package com.lukaspaczos.currencyconverter;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -85,6 +87,9 @@ public class RatesUpdate {
 
     public static void parse(Context context) {
         Log.i("XMLParsing", "started");
+
+        SharedPreferences sharedPref = context.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
+
         try {
             File xmlFile = new File(context.getExternalFilesDir(null).toString() + "/Download/" + FILE_NAME);
             FileReader fileReader = new FileReader(xmlFile);
@@ -103,16 +108,13 @@ public class RatesUpdate {
                             date = myParser.getAttributeValue(null, "time");
                             if (date != null) {
                                 Log.i("Date from file", date);
-                                SharedPreferences sharedPref = context.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString(context.getString(R.string.date), date);
                                 editor.apply();
                             }
                             else {
-                                String shortName = "";
-                                String rate = "";
-                                shortName = myParser.getAttributeValue(null, "currency");
-                                rate = myParser.getAttributeValue(null, "rate");
+                                String shortName = myParser.getAttributeValue(null, "currency");
+                                String rate = myParser.getAttributeValue(null, "rate");
                                 if (shortName != null && rate != null) {
                                     Log.i("shortName", shortName);
                                     Log.i("rate", rate);
@@ -149,6 +151,10 @@ public class RatesUpdate {
             i++;
         }
 
+        TextView date = (TextView) ((Activity)context).getWindow()
+        .getDecorView().findViewById(android.R.id.content).findViewById(R.id.date);
+        date.setText(sharedPref.getString(context.getString(R.string.date),
+                context.getString(R.string.default_date)));
         Log.i("XMLParsing", "finished");
         Log.i("RatesUpdate", "finished");
     }

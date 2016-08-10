@@ -2,11 +2,13 @@
     <string name="app_name">Currency Converter</string>
     <string name="action_about">About</string>
     <string name="action_update">Update Rates</string>
-    <string name="about_text"><b>Authors:</b>\n
-        Icon project:\n <b>Michal Wojtas</b>\n
-        Coding and everything else:\n <b>Lukas Paczos</b>\n
-        If you find any bugs or maybe you\'d like to share some feedback,
-        feel free to send me an e-mail: lukas.paczos@gmail.com. Thanks!</string>
+    <string name="about_text">
+        <i>New exchange rates are available every
+        Monday to Friday at 16:00 CET\n\n</i>
+        Creator and developer:\n <b>Lukas Paczos</b>\n\n
+        Icon project:\n <b>Michal Wojtas</b>\n\n
+        If you find any bugs or maybe you\'d like to share some feedback,\n
+        feel free to send me an e-mail:\n<b>lukas.paczos@gmail.com</b>\nThanks!</string>
 
     <string name="converter_choose_amount">How much to convert?</string>
 
@@ -88,4 +90,7 @@
     <string name="default_from">GBP</string>
     <string name="default_to">PLN</string>
     <string name="default_date"> </string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-3158356248600163/9999108331</string>
+
 </resources>

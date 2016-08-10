@@ -5,11 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +19,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.io.File;
 import java.util.Locale;
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     public String currencyFrom;
     public String currencyTo;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        MobileAds.initialize(getApplicationContext(), getString(R.string.banner_ad_unit_id));
+
+        adView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        //TODO remove before store upload
+        //adView.loadAd(adRequest);
 
         contextMain = this;
 
@@ -53,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             RatesUpdate.update(this);
         }
-
 
         setViews();
 
@@ -120,6 +131,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         calculateOutcome(input);
+    }
+
+    @Override
+    protected void onPause() {
+        adView.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adView.resume();
     }
 
     private void calculateOutcome(double input) {
@@ -212,16 +235,11 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_about) {
             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setTitle(" ");
-            final TextView inputView = new TextView(MainActivity.this);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            inputView.setText(getString(R.string.about_text));
-            inputView.setLayoutParams(lp);
-            inputView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            inputView.setTextSize(15);
-            alertDialog.setView(inputView);
+            alertDialog.setTitle(getString(R.string.action_about));
+            final TextView textView = (TextView) getLayoutInflater().inflate(R.layout.about_view, null, false);
+            textView.setText(getText(R.string.about_text));
+            textView.setMovementMethod(new ScrollingMovementMethod());
+            alertDialog.setView(textView);
             alertDialog.setCancelable(true);
             alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
