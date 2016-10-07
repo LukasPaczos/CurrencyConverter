@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,16 +12,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class ChooseCurrencyActivity extends AppCompatActivity {
 
-    private Context contextChooseCurrencyActivity;
-    private ArrayAdapter<Currency> adapter;
     private SharedPreferences sharedPref;
     private static final int CHANGE_FROM = 0;
-    private static final int CHANGE_TO = 1;
     public int type;
 
     @Override
@@ -33,8 +25,6 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        contextChooseCurrencyActivity = this;
-
         sharedPref = this.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
 
         Bundle extras = getIntent().getExtras();
@@ -42,7 +32,7 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
             type = extras.getInt("TYPE");
         }
 
-        adapter = new ArrayAdapter<Currency>(this, android.R.layout.simple_list_item_1, Currency.list);
+        ArrayAdapter<Currency> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Currency.list);
 
         ListView listView = (ListView) findViewById(R.id.list_currencies);
         listView.setAdapter(adapter);

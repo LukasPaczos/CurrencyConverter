@@ -16,10 +16,9 @@ public class CheckDownloadComplete extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-            isDownloadComplete = true;
-            Log.i("Download completed?", String.valueOf(isDownloadComplete));
-            RatesUpdate.parse(MainActivity.contextMain);
-            Toast.makeText(MainActivity.contextMain, "Update finished.", Toast.LENGTH_SHORT).show();
+            Log.i("Download completed?", String.valueOf(true));
+            RatesUpdate.parse(MainActivity.getActivity());
+            Toast.makeText(MainActivity.getActivity(), "Update finished.", Toast.LENGTH_SHORT).show();
         }
     }
 }

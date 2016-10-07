@@ -1,11 +1,13 @@
 package com.lukaspaczos.currencyconverter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,12 +27,14 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Locale;
+import java.util.Map;
 
 //TODO find bugs
+//TODO translation to Polish
 public class MainActivity extends AppCompatActivity {
 
-    public static Context contextMain;
     private double input = 0;
     private SharedPreferences sharedPref;
     public String currencyFrom;
@@ -51,15 +55,13 @@ public class MainActivity extends AppCompatActivity {
         //TODO remove before store upload
         //adView.loadAd(adRequest);
 
-        contextMain = this;
-
-        sharedPref = contextMain.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
+        sharedPref = this.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
         getSharedPreferences();
 
         Log.i("Preferences From", sharedPref.getString(getString(R.string.preference_from), getResources().getString(R.string.default_from)));
         Log.i("Preferences To", sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to)));
 
-        File xmlFile = new File(this.getExternalFilesDir(null).toString() + "/Download/" + RatesUpdate.FILE_NAME);
+        File xmlFile = new File(Environment.getExternalStorageDirectory().toString() + "/Download/" + RatesUpdate.FILE_NAME);
         if (xmlFile.exists()) {
             RatesUpdate.parse(this);
         } else {
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         startingAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(contextMain);
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
                 alertDialog.setTitle(R.string.converter_choose_amount);
                 final EditText inputView = new EditText(MainActivity.this);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         getSharedPreferences();
         double rateFrom = 1;
         double rateTo = 1;
-        for (Currency c: Currency.list) {
+        for (Currency c : Currency.list) {
             if (c.getShortName().equals(currencyFrom)) {
                 rateFrom = c.getRate();
             }
@@ -178,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         currencyFromTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(contextMain, ChooseCurrencyActivity.class);
+                Intent intent = new Intent(MainActivity.this, ChooseCurrencyActivity.class);
                 intent.putExtra("TYPE", 0);
                 startActivityForResult(intent, 1);
             }
@@ -189,17 +191,17 @@ public class MainActivity extends AppCompatActivity {
         currencyToTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(contextMain, ChooseCurrencyActivity.class);
+                Intent intent = new Intent(MainActivity.this, ChooseCurrencyActivity.class);
                 intent.putExtra("TYPE", 1);
                 startActivityForResult(intent, 1);
             }
         });
 
-        TextView currencyToHintTv = (TextView) findViewById(R.id.currency_to_hint);
-        currencyToHintTv.setText(currencyTo);
+        /*TextView currencyToHintTv = (TextView) findViewById(R.id.currency_to_hint);
+        currencyToHintTv.setText(currencyTo);*/
 
-        TextView currencyFromHintTv = (TextView) findViewById(R.id.currency_from_hint);
-        currencyFromHintTv.setText(currencyFrom);
+        /*TextView currencyFromHintTv = (TextView) findViewById(R.id.currency_from_hint);
+        currencyFromHintTv.setText(currencyFrom);*/
 
         TextView date = (TextView) findViewById(R.id.date);
         date.setText(sharedPref.getString(getString(R.string.date), getResources().getString(R.string.default_date)));
@@ -258,5 +260,34 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static Activity getActivity() {
+        Activity activity = null;
+        try {
+            Class activityThreadClass = Class.forName("android.app.ActivityThread");
+            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
+            activitiesField.setAccessible(true);
+
+            Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
+            if (activities == null)
+                return null;
+
+            for (Object activityRecord : activities.values()) {
+                Class activityRecordClass = activityRecord.getClass();
+                Field pausedField = activityRecordClass.getDeclaredField("paused");
+                pausedField.setAccessible(true);
+                if (!pausedField.getBoolean(activityRecord)) {
+                    Field activityField = activityRecordClass.getDeclaredField("activity");
+                    activityField.setAccessible(true);
+                    activity = (Activity) activityField.get(activityRecord);
+                }
+            }
+
+        } catch (Exception e) {
+            Log.i("error", e.getMessage());
+        }
+        return activity;
     }
 }

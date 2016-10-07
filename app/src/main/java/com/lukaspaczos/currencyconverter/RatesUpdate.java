@@ -23,22 +23,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RatesUpdate {
-    private static DownloadManager downloadManager;
     public static final String FILE_NAME = "eurofxref-daily.xml";
-    private static Context context;
 
     public static long update(Context c) {
         Log.i("RatesUpdate", "started");
-        context = c;
         Uri dataUri = Uri.parse("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
-        return downloadData(dataUri, context);
+        return downloadData(dataUri, c);
     }
 
     private static long downloadData(Uri uri, Context context) {
         long downloadReference;
 
         // Create request for android download manager
-        downloadManager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(MainActivity.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
 
@@ -51,10 +48,10 @@ public class RatesUpdate {
         //Set the local destination for the downloaded file to a path within the application's external files directory
         request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, FILE_NAME);
 
-        if (isNetworkAvailable()) {
-            Log.i("File exists", Boolean.toString(fileExists(FILE_NAME)));
-            if (fileExists(FILE_NAME)) {
-                if (deleteFile(FILE_NAME)) {
+        if (isNetworkAvailable(context)) {
+            Log.i("File exists", Boolean.toString(fileExists(context, FILE_NAME)));
+            if (fileExists(context, FILE_NAME)) {
+                if (deleteFile(context, FILE_NAME)) {
                     Log.i("File deleted", "true");
                 } else {
                     Log.i("File deleted", "false");
@@ -74,14 +71,14 @@ public class RatesUpdate {
         return downloadReference;
     }
 
-    private static boolean fileExists(String fileName) {
-        File file = new File(context.getExternalFilesDir(null).toString() + "/Download/" + fileName);
-        Log.i("File path", context.getExternalFilesDir(null).toString() + "/Download/" + fileName);
+    private static boolean fileExists(Context context, String fileName) {
+        File file = new File(context.getExternalFilesDir(null) + "/Download/" + fileName);
+        Log.i("File path", context.getExternalFilesDir(null) + "/Download/" + fileName);
         return file.exists();
     }
 
-    private static boolean deleteFile(String fileName) {
-        File file = new File(context.getExternalFilesDir(null).toString() + "/Download/" + fileName);
+    private static boolean deleteFile(Context context, String fileName) {
+        File file = new File(context.getExternalFilesDir(null) + "/Download/" + fileName);
         return file.delete();
     }
 
@@ -91,7 +88,7 @@ public class RatesUpdate {
         SharedPreferences sharedPref = context.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
 
         try {
-            File xmlFile = new File(context.getExternalFilesDir(null).toString() + "/Download/" + FILE_NAME);
+            File xmlFile = new File(context.getExternalFilesDir(null) + "/Download/" + FILE_NAME);
             FileReader fileReader = new FileReader(xmlFile);
             XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
             XmlPullParser myParser = xmlFactoryObject.newPullParser();
@@ -104,8 +101,7 @@ public class RatesUpdate {
                 switch (event) {
                     case XmlPullParser.START_TAG:
                         if (name.equals("Cube")) {
-                            String date = "";
-                            date = myParser.getAttributeValue(null, "time");
+                            String date = myParser.getAttributeValue(null, "time");
                             if (date != null) {
                                 Log.i("Date from file", date);
                                 SharedPreferences.Editor editor = sharedPref.edit();
@@ -159,7 +155,7 @@ public class RatesUpdate {
         Log.i("RatesUpdate", "finished");
     }
 
-    private static boolean isNetworkAvailable() {
+    private static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();

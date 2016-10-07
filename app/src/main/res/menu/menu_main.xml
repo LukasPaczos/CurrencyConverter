@@ -11,6 +11,6 @@
         android:id="@+id/action_update"
         android:orderInCategory="50"
         android:title="@string/action_update"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/ic_refresh_white_24px"/>
 </menu>

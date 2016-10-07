@@ -10,41 +10,12 @@
         If you find any bugs or maybe you\'d like to share some feedback,\n
         feel free to send me an e-mail:\n<b>lukas.paczos@gmail.com</b>\nThanks!</string>
 
+    <string name="footer">Exchange rate valid as of: </string>
+
     <string name="converter_choose_amount">How much to convert?</string>
 
-    <string-array name="currencies_short">
-        <item>GBP</item>
-        <item>EUR</item>
-        <item>USD</item>
-        <item>PLN</item>
-        <item>JPY</item>
-        <item>BGN</item>
-        <item>CZK</item>
-        <item>DKK</item>
-        <item>HUF</item>
-        <item>RON</item>
-        <item>SEK</item>
-        <item>CHF</item>
-        <item>NOK</item>
-        <item>HRK</item>
-        <item>RUB</item>
-        <item>TRY</item>
-        <item>AUD</item>
-        <item>BRL</item>
-        <item>CAD</item>
-        <item>CNY</item>
-        <item>HKD</item>
-        <item>ILS</item>
-        <item>INR</item>
-        <item>KRW</item>
-        <item>MXN</item>
-        <item>MYR</item>
-        <item>NZD</item>
-        <item>PHP</item>
-        <item>SGD</item>
-        <item>THB</item>
-        <item>ZAR</item>
-    </string-array>
+    <string name="currency_euro_short">EUR</string>
+    <string name="currency_usd_short">USD</string>
 
     <string-array name="currencies_long">
         <item>EURO</item>
@@ -92,5 +63,8 @@
     <string name="default_date"> </string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3158356248600163/9999108331</string>
+
+    <string name="content_arrow">arrow pointing right</string>
+    <string name="content_separating_line">line separating amount and name</string>
 
 </resources>
