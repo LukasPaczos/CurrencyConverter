@@ -12,6 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.lukaspaczos.currencyconverter.currency.Currency;
+import com.lukaspaczos.currencyconverter.currency.CurrencyAdapter;
+
 public class ChooseCurrencyActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPref;
@@ -32,7 +35,7 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
             type = extras.getInt("TYPE");
         }
 
-        ArrayAdapter<Currency> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Currency.list);
+        CurrencyAdapter adapter = new CurrencyAdapter(this, Currency.list);
 
         ListView listView = (ListView) findViewById(R.id.list_currencies);
         listView.setAdapter(adapter);

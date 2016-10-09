@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -25,13 +25,15 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.lukaspaczos.currencyconverter.currency.Currency;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Map;
 
-//TODO find bugs
+import me.grantland.widget.AutofitTextView;
+
+//TODO fiddle with shadows
 //TODO translation to Polish
 public class MainActivity extends AppCompatActivity {
 
@@ -61,16 +63,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i("Preferences From", sharedPref.getString(getString(R.string.preference_from), getResources().getString(R.string.default_from)));
         Log.i("Preferences To", sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to)));
 
-        File xmlFile = new File(Environment.getExternalStorageDirectory().toString() + "/Download/" + RatesUpdate.FILE_NAME);
-        if (xmlFile.exists()) {
-            RatesUpdate.parse(this);
-        } else {
-            RatesUpdate.update(this);
-        }
-
         setViews();
 
-        TextView startingAmount = (TextView) findViewById(R.id.currency_starting);
+        AutofitTextView startingAmount = (AutofitTextView) findViewById(R.id.currency_starting);
         startingAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
                 inputView.setSingleLine(true);
                 inputView.setMaxLines(1);
                 inputView.setLines(1);
+                InputFilter[] filterArray = new InputFilter[1];
+                filterArray[0] = new InputFilter.LengthFilter(15);
+                inputView.setFilters(filterArray);
                 inputView.setHint(String.format(Locale.US, "%.2f", input));
                 inputView.setRawInputType(Configuration.KEYBOARD_12KEY);
                 alertDialog.setView(inputView);
@@ -147,6 +145,19 @@ public class MainActivity extends AppCompatActivity {
         adView.resume();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putDouble("input", input);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        input = savedInstanceState.getDouble("input");
+        calculateOutcome(input);
+    }
+
     private void calculateOutcome(double input) {
         getSharedPreferences();
         double rateFrom = 1;
@@ -163,9 +174,9 @@ public class MainActivity extends AppCompatActivity {
         double inputInEuro = input / rateFrom;
         double outcome = inputInEuro * rateTo;
 
-        TextView amountFrom = (TextView) findViewById(R.id.currency_starting);
+        AutofitTextView amountFrom = (AutofitTextView) findViewById(R.id.currency_starting);
         amountFrom.setText(String.format(Locale.US, "%.2f", input));
-        TextView amountOutcome = (TextView) findViewById(R.id.currency_outcome);
+        AutofitTextView amountOutcome = (AutofitTextView) findViewById(R.id.currency_outcome);
         amountOutcome.setText(String.format(Locale.US, "%.2f", outcome));
     }
 
@@ -177,7 +188,8 @@ public class MainActivity extends AppCompatActivity {
     private void setViews() {
         TextView currencyFromTv = (TextView) findViewById(R.id.currency_from);
         currencyFromTv.setText(currencyFrom);
-        currencyFromTv.setOnClickListener(new View.OnClickListener() {
+        LinearLayout currencyFromLayout = (LinearLayout) findViewById(R.id.layout_from);
+        currencyFromLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ChooseCurrencyActivity.class);
@@ -188,7 +200,8 @@ public class MainActivity extends AppCompatActivity {
 
         TextView currencyToTv = (TextView) findViewById(R.id.currency_to);
         currencyToTv.setText(currencyTo);
-        currencyToTv.setOnClickListener(new View.OnClickListener() {
+        LinearLayout currencyToLayout = (LinearLayout) findViewById(R.id.layout_to);
+        currencyToLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ChooseCurrencyActivity.class);
@@ -196,6 +209,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
+
+        ImageView currencyFromFlag = (ImageView) findViewById(R.id.currency_from_flag);
+        currencyFromFlag.setBackgroundResource(Currency.flagsMap.get(currencyFrom));
+
+        ImageView currencyToFlag = (ImageView) findViewById(R.id.currency_to_flag);
+        currencyToFlag.setBackgroundResource(Currency.flagsMap.get(currencyTo));
 
         /*TextView currencyToHintTv = (TextView) findViewById(R.id.currency_to_hint);
         currencyToHintTv.setText(currencyTo);*/

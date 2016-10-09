@@ -5,6 +5,7 @@
     android:padding="16dp"
     android:gravity="center"
     android:textSize="17sp"
+    android:textColor="@android:color/black"
     android:scrollbars="vertical"
     android:maxLines="8">
 

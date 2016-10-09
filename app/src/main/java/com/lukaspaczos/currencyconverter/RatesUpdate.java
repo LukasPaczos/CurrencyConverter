@@ -12,6 +12,8 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lukaspaczos.currencyconverter.currency.Currency;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -60,12 +62,12 @@ public class RatesUpdate {
             //Enqueue download and save into referenceId
             downloadReference = downloadManager.enqueue(request);
             Log.i("Download", "started");
-            Toast.makeText(context, "Downloading exchange rates.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.update_downloading, Toast.LENGTH_SHORT).show();
         } else {
             Log.i("Download", "no internet connection");
             Log.i("Update", "failed");
             downloadReference = -1;
-            Toast.makeText(context, "Update failed, no Internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.update_failed_no_internet, Toast.LENGTH_SHORT).show();
         }
 
         return downloadReference;
@@ -131,10 +133,10 @@ public class RatesUpdate {
             }
 
         } catch (XmlPullParserException e) {
-            Toast.makeText(context, "Error updating exchange rates.(XMLparse)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.update_error_xml, Toast.LENGTH_SHORT).show();
             Log.i("XMLParseException", e.getMessage());
         } catch (IOException e) {
-            Toast.makeText(context, "Error updating exchange rates.(IOE)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
             Log.i("IOException", e.getMessage());
         }
 

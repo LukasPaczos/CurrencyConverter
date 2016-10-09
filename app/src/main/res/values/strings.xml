@@ -34,8 +34,6 @@
         <item>Croatian Kuna</item>
         <item>Russian Ruble</item>
         <item>Turkish Lira</item>
-        <item>Turkish Lira</item>
-        <item>Australian Dollar</item>
         <item>Australian Dollar</item>
         <item>Brazilian Real</item>
         <item>Canadian Dollar</item>
@@ -66,5 +64,13 @@
 
     <string name="content_arrow">arrow pointing right</string>
     <string name="content_separating_line">line separating amount and name</string>
+
+    <string name="update_failed_no_internet">Update failed, no Internet connection.</string>
+    <string name="update_downloading">Downloading exchange rates.</string>
+    <string name="update_error_xml">Error updating exchange rates.(XMLparse)</string>
+    <string name="update_error_ioe">Error updating exchange rates.(IOE)</string>
+    <string name="update_finished">Update finished.</string>
+
+    <string name="image_description">flag</string>
 
 </resources>
