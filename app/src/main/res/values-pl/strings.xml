@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Currency Converter</string>
+    <string name="about_text"><i>Nowe kursy walut dostępne od poniedziałku do piątku o 16:00 CET</i>\n\n        Twórca i programista:\n         <b>Łukasz Paczos</b>\n         \n        Projekt ikony:\n         <b>Michał Wojtas</b>\n        \n        Drogi użytkowniku! Jeżeli pojawiły się jakieś błędy,\n         lub po prostu chciałbyś się podzielić opinią na temat appki, napisz:\n        <b>lukas.paczos@gmail.com</b>\n        Dzięki!</string>
+    <string name="action_about">Info</string>
+    <string name="action_update">Uaktualnij kursy</string>
+    <string name="content_separating_line">podkreślnik</string>
+    <string name="converter_choose_amount">Jaką sumę wymienić?</string>
+    <string name="footer">"Kursy ważne na dzień: "</string>
+    <string name="image_description">flaga</string>
+    <string name="update_downloading">Pobieram kursy walut.</string>
+    <string name="update_error_ioe">Błąd w trakcie pobierania kursów.(IOE)</string>
+    <string name="update_error_xml">Błąd w trakcie pobierania kursów.(XMLparse)</string>
+    <string name="update_failed_no_internet">Nie udało się zaktualizować. Brak połączenia z Internetem.</string>
+    <string name="update_finished">Ukończono aktualizacje.</string>
+    <string name="content_arrow">strzałki zamiany</string>
+    <string-array name="currencies_long">
+        <item>EURO</item>
+        <item>dolar amerykański</item>
+        <item>jen japoński</item>
+        <item>lew bułgarski</item>
+        <item>korona czeska</item>
+        <item>korona duńska</item>
+        <item>funt brytyjski</item>
+        <item>forint węgierski</item>
+        <item>złoty polski</item>
+        <item>lej rumuński</item>
+        <item>korona szwedzka</item>
+        <item>frank szwajcarski</item>
+        <item>korona norweska</item>
+        <item>kuna chorwacka</item>
+        <item>rubl rosyjski</item>
+        <item>lira turecka</item>
+        <item>dolar australijski</item>
+        <item>real brazylijski</item>
+        <item>dolar kanadyjski</item>
+        <item>yuan chiński</item>
+        <item>dolar hongkoński</item>
+        <item>rupia indonezyjska</item>
+        <item>nowy shekel izraelski</item>
+        <item>rupia indyjska</item>
+        <item>won koreański</item>
+        <item>peso meksykańskie</item>
+        <item>ringgit malezyjski</item>
+        <item>doalr nowozelandzki</item>
+        <item>peso filipińskie</item>
+        <item>dolar singapurski</item>
+        <item>baht tajski</item>
+        <item>rand połodniowoafrykański</item>
+    </string-array>
+</resources>

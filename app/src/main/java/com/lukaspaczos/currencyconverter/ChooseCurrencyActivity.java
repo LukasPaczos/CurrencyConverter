@@ -6,10 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.lukaspaczos.currencyconverter.currency.Currency;
@@ -55,10 +53,8 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         if (type == CHANGE_FROM) {
             editor.putString(getString(R.string.preference_from), newCurrency);
-            Log.i("Change from", "done");
         } else {
             editor.putString(getString(R.string.preference_to), newCurrency);
-            Log.i("Change to", "done");
         }
         editor.apply();
     }

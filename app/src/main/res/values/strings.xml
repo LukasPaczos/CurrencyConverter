@@ -14,8 +14,8 @@
 
     <string name="converter_choose_amount">How much to convert?</string>
 
-    <string name="currency_euro_short">EUR</string>
-    <string name="currency_usd_short">USD</string>
+    <string name="currency_euro_short" translatable="false">EUR</string>
+    <string name="currency_usd_short" translatable="false">USD</string>
 
     <string-array name="currencies_long">
         <item>EURO</item>
@@ -50,20 +50,16 @@
         <item>Singapore Dollar</item>
         <item>Thai Baht</item>
         <item>South African Rand</item>
-
     </string-array>
 
-    <string name="preference_from">preference_from</string>
-    <string name="preference_to">preference_to</string>
-    <string name="date">date</string>
-    <string name="default_from">GBP</string>
-    <string name="default_to">PLN</string>
-    <string name="default_date"> </string>
+    <string name="preference_from" translatable="false">preference_from</string>
+    <string name="preference_to" translatable="false">preference_to</string>
+    <string name="date" translatable="false">date</string>
+    <string name="default_from" translatable="false">GBP</string>
+    <string name="default_to" translatable="false">PLN</string>
+    <string name="default_date" translatable="false"> </string>
 
-    <string name="banner_ad_unit_id">ca-app-pub-3158356248600163/9999108331</string>
-
-    <string name="content_arrow">arrow pointing right</string>
-    <string name="content_separating_line">line separating amount and name</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3158356248600163/9999108331</string>
 
     <string name="update_failed_no_internet">Update failed, no Internet connection.</string>
     <string name="update_downloading">Downloading exchange rates.</string>
@@ -71,6 +67,8 @@
     <string name="update_error_ioe">Error updating exchange rates.(IOE)</string>
     <string name="update_finished">Update finished.</string>
 
+    <string name="content_separating_line">underline</string>
+    <string name="content_arrow">swap arrows</string>
     <string name="image_description">flag</string>
 
 </resources>

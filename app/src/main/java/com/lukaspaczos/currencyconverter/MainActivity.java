@@ -34,7 +34,7 @@ import java.util.Map;
 
 import me.grantland.widget.AutofitTextView;
 
-//TODO translation to Polish
+//TODO comments
 public class MainActivity extends AppCompatActivity {
 
     private double input = 0;
@@ -54,14 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
         adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        //TODO remove before store upload
-        //adView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         sharedPref = this.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
         getSharedPreferences();
-
-        Log.i("Preferences From", sharedPref.getString(getString(R.string.preference_from), getResources().getString(R.string.default_from)));
-        Log.i("Preferences To", sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to)));
 
         setViews();
 
@@ -114,9 +110,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.preference_from), currencyTo);
-                Log.i("Change from", "done");
                 editor.putString(getString(R.string.preference_to), currencyFrom);
-                Log.i("Change to", "done");
                 editor.apply();
                 getSharedPreferences();
                 setViews();
@@ -221,20 +215,12 @@ public class MainActivity extends AppCompatActivity {
         ImageView currencyToFlag = (ImageView) findViewById(R.id.currency_to_flag);
         currencyToFlag.setBackgroundResource(Currency.flagsMap.get(currencyTo));
 
-        /*TextView currencyToHintTv = (TextView) findViewById(R.id.currency_to_hint);
-        currencyToHintTv.setText(currencyTo);*/
-
-        /*TextView currencyFromHintTv = (TextView) findViewById(R.id.currency_from_hint);
-        currencyFromHintTv.setText(currencyFrom);*/
-
         TextView date = (TextView) findViewById(R.id.date);
         date.setText(sharedPref.getString(getString(R.string.date), getResources().getString(R.string.default_date)));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("requestCode", Integer.toString(requestCode));
-        Log.i("resultCode", Integer.toString(resultCode));
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 getSharedPreferences();
@@ -253,12 +239,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_about) {
             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog.setTitle(getString(R.string.action_about));
@@ -310,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            Log.i("error", e.getMessage());
+            Log.e("error", e.getMessage());
         }
         return activity;
     }

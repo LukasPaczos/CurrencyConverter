@@ -8,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +27,6 @@ public class RatesUpdate {
     public static final String FILE_NAME = "eurofxref-daily.xml";
 
     public static long update(Context c) {
-        Log.i("RatesUpdate", "started");
         Uri dataUri = Uri.parse("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
         return downloadData(dataUri, c);
     }
@@ -51,21 +49,13 @@ public class RatesUpdate {
         request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, FILE_NAME);
 
         if (isNetworkAvailable(context)) {
-            Log.i("File exists", Boolean.toString(fileExists(context, FILE_NAME)));
             if (fileExists(context, FILE_NAME)) {
-                if (deleteFile(context, FILE_NAME)) {
-                    Log.i("File deleted", "true");
-                } else {
-                    Log.i("File deleted", "false");
-                }
+                deleteFile(context, FILE_NAME);
             }
             //Enqueue download and save into referenceId
             downloadReference = downloadManager.enqueue(request);
-            Log.i("Download", "started");
             Toast.makeText(context, R.string.update_downloading, Toast.LENGTH_SHORT).show();
         } else {
-            Log.i("Download", "no internet connection");
-            Log.i("Update", "failed");
             downloadReference = -1;
             Toast.makeText(context, R.string.update_failed_no_internet, Toast.LENGTH_SHORT).show();
         }
@@ -75,7 +65,6 @@ public class RatesUpdate {
 
     private static boolean fileExists(Context context, String fileName) {
         File file = new File(context.getExternalFilesDir(null) + "/Download/" + fileName);
-        Log.i("File path", context.getExternalFilesDir(null) + "/Download/" + fileName);
         return file.exists();
     }
 
@@ -85,10 +74,7 @@ public class RatesUpdate {
     }
 
     public static void parse(Context context) {
-        Log.i("XMLParsing", "started");
-
         SharedPreferences sharedPref = context.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
-
         try {
             File xmlFile = new File(context.getExternalFilesDir(null) + "/Download/" + FILE_NAME);
             FileReader fileReader = new FileReader(xmlFile);
@@ -105,7 +91,6 @@ public class RatesUpdate {
                         if (name.equals("Cube")) {
                             String date = myParser.getAttributeValue(null, "time");
                             if (date != null) {
-                                Log.i("Date from file", date);
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString(context.getString(R.string.date), date);
                                 editor.apply();
@@ -114,12 +99,7 @@ public class RatesUpdate {
                                 String shortName = myParser.getAttributeValue(null, "currency");
                                 String rate = myParser.getAttributeValue(null, "rate");
                                 if (shortName != null && rate != null) {
-                                    Log.i("shortName", shortName);
-                                    Log.i("rate", rate);
                                     new Currency(shortName, "", Double.valueOf(rate));
-                                } else {
-                                    Log.i("shortName", "null");
-                                    Log.i("rate", "null");
                                 }
                             }
                         }
@@ -134,10 +114,8 @@ public class RatesUpdate {
 
         } catch (XmlPullParserException e) {
             Toast.makeText(context, R.string.update_error_xml, Toast.LENGTH_SHORT).show();
-            Log.i("XMLParseException", e.getMessage());
         } catch (IOException e) {
             Toast.makeText(context, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
-            Log.i("IOException", e.getMessage());
         }
 
         List<String> longNames = Arrays.asList(context.getResources().getStringArray(R.array.currencies_long));
@@ -153,8 +131,6 @@ public class RatesUpdate {
         .getDecorView().findViewById(android.R.id.content).findViewById(R.id.date);
         date.setText(sharedPref.getString(context.getString(R.string.date),
                 context.getString(R.string.default_date)));
-        Log.i("XMLParsing", "finished");
-        Log.i("RatesUpdate", "finished");
     }
 
     private static boolean isNetworkAvailable(Context context) {
