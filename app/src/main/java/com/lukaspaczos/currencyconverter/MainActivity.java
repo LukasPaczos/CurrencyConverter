@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +34,6 @@ import java.util.Map;
 
 import me.grantland.widget.AutofitTextView;
 
-//TODO fiddle with shadows
 //TODO translation to Polish
 public class MainActivity extends AppCompatActivity {
 
@@ -101,13 +101,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-                //reset button doesnt work yet
-                /*alertDialog.setNeutralButton("Reset", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        inputView.setText("");
-                    }
-                });*/
                 AlertDialog dialog = alertDialog.create();
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 dialog.show();
@@ -156,6 +149,18 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         input = savedInstanceState.getDouble("input");
         calculateOutcome(input);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+
+            this.moveTaskToBack(true);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     private void calculateOutcome(double input) {

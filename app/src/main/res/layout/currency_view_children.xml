@@ -8,7 +8,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:gravity="center">
+        android:clipToPadding="false"
+        android:gravity="center"
+        android:padding="12dp">
 
         <ImageView
             android:id="@+id/currency_flag"
@@ -16,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/image_description"
-            android:elevation="6dp" />
+            android:elevation="4dp" />
 
     </RelativeLayout>
 
