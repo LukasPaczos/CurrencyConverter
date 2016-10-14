@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -92,8 +93,28 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (!inputView.getText().toString().equals("")) {
-                            input = Double.valueOf(inputView.getText().toString());
-                            calculateOutcome(input);
+                            char[] value = inputView.getText().toString().toCharArray();
+                            boolean wrongCharFlag = false;
+                            int dotsCount = 0;
+                            for (char c : value) {
+                                if (!Character.isDigit(c)) {
+                                    if (c != '.') {
+                                        wrongCharFlag = true;
+                                        break;
+                                    }
+                                    else if (++dotsCount > 1) {
+                                        wrongCharFlag = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (wrongCharFlag) {
+                                Toast.makeText(MainActivity.this, getString(R.string.input_error), Toast.LENGTH_LONG).show();
+                                dialogInterface.cancel();
+                            } else {
+                                input = Double.valueOf(inputView.getText().toString());
+                                calculateOutcome(input);
+                            }
                         }
                     }
                 });

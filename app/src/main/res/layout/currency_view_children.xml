@@ -14,11 +14,13 @@
 
         <ImageView
             android:id="@+id/currency_flag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:clipToPadding="false"
             android:contentDescription="@string/image_description"
-            android:elevation="4dp" />
+            android:elevation="4dp"
+            android:padding="4dp" />
 
     </RelativeLayout>
 

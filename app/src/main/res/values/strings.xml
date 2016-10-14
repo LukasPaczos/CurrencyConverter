@@ -13,6 +13,7 @@
     <string name="footer">Exchange rate valid as of: </string>
 
     <string name="converter_choose_amount">How much to convert?</string>
+    <string name="input_error">Wrong format (use only digits and single \'.\' as a separator).</string>
 
     <string name="currency_euro_short" translatable="false">EUR</string>
     <string name="currency_usd_short" translatable="false">USD</string>

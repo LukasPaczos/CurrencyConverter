@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Currency Converter</string>
+    <string name="app_name">Konwerter walut</string>
     <string name="about_text"><i>Nowe kursy walut dostępne od poniedziałku do piątku o 16:00 CET</i>\n\n        Twórca i programista:\n         <b>Łukasz Paczos</b>\n         \n        Projekt ikony:\n         <b>Michał Wojtas</b>\n        \n        Drogi użytkowniku! Jeżeli pojawiły się jakieś błędy,\n         lub po prostu chciałbyś się podzielić opinią na temat appki, napisz:\n        <b>lukas.paczos@gmail.com</b>\n        Dzięki!</string>
     <string name="action_about">Info</string>
     <string name="action_update">Uaktualnij kursy</string>
@@ -48,4 +48,5 @@
         <item>baht tajski</item>
         <item>rand połodniowoafrykański</item>
     </string-array>
+    <string name="input_error">Nieprawidłowy format (dostępne tylko cyfry oraz \'.\' jako separator).</string>
 </resources>
