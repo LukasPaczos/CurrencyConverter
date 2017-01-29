@@ -1,10 +1,8 @@
 package com.lukaspaczos.currencyconverter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -17,7 +15,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,13 +36,15 @@ import java.util.Map;
 import me.grantland.widget.AutofitTextView;
 
 //TODO comments
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnLoadingStateChangeListener {
 
     private double input = 0;
-    private SharedPreferences sharedPref;
     public String currencyFrom;
     public String currencyTo;
     private AdView adView;
+    private final RatesUpdater ratesUpdater = RatesUpdater.getInstance();
+    private boolean isLoading = false;
+    private ImageView refreshImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +53,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        refreshImage = (ImageView) getLayoutInflater().inflate(R.layout.refresh_rotation, null);
+
         MobileAds.initialize(getApplicationContext(), getString(R.string.banner_ad_unit_id));
 
         adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-
-        sharedPref = this.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
-        getSharedPreferences();
 
         setViews();
 
@@ -119,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 AlertDialog dialog = alertDialog.create();
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                Window window = dialog.getWindow();
+                if (window != null)
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 dialog.show();
 
             }
@@ -129,11 +132,8 @@ public class MainActivity extends AppCompatActivity {
         swapView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString(getString(R.string.preference_from), currencyTo);
-                editor.putString(getString(R.string.preference_to), currencyFrom);
-                editor.apply();
-                getSharedPreferences();
+                PrefsManager.setString(PrefsManager.PREFERENCE_FROM, currencyTo);
+                PrefsManager.setString(PrefsManager.PREFERENCE_TO, currencyFrom);
                 setViews();
                 calculateOutcome(input);
             }
@@ -151,6 +151,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         adView.resume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (PrefsManager.getBoolean(PrefsManager.UPDATE_SCHEDULED, false)) {
+            ratesUpdater.update(this);
+            PrefsManager.setBoolean(PrefsManager.UPDATE_SCHEDULED, false);
+        } else if (PrefsManager.getBoolean(PrefsManager.PARSE_SCHEDULED, false)) {
+            ratesUpdater.parse(this.getApplicationContext());
+            PrefsManager.setBoolean(PrefsManager.PARSE_SCHEDULED, false);
+        }
     }
 
     @Override
@@ -179,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void calculateOutcome(double input) {
-        getSharedPreferences();
         double rateFrom = 1;
         double rateTo = 1;
         for (Currency c : Currency.list) {
@@ -198,14 +209,14 @@ public class MainActivity extends AppCompatActivity {
         amountFrom.setText(String.format(Locale.US, "%.2f", input));
         AutofitTextView amountOutcome = (AutofitTextView) findViewById(R.id.currency_outcome);
         amountOutcome.setText(String.format(Locale.US, "%.2f", outcome));
-    }
 
-    private void getSharedPreferences() {
-        currencyFrom = sharedPref.getString(getString(R.string.preference_from), getResources().getString(R.string.default_from));
-        currencyTo = sharedPref.getString(getString(R.string.preference_to), getResources().getString(R.string.default_to));
+        if (PrefsManager.getString(PrefsManager.DATA, "").isEmpty())
+            Toast.makeText(this, R.string.error_try_update, Toast.LENGTH_SHORT).show();
     }
 
     private void setViews() {
+        currencyFrom = PrefsManager.getString(PrefsManager.PREFERENCE_FROM, PrefsManager.DEFAULT_FROM);
+        currencyTo = PrefsManager.getString(PrefsManager.PREFERENCE_TO, PrefsManager.DEFAULT_TO);
         TextView currencyFromTv = (TextView) findViewById(R.id.currency_from);
         currencyFromTv.setText(currencyFrom);
         LinearLayout currencyFromLayout = (LinearLayout) findViewById(R.id.layout_from);
@@ -237,14 +248,13 @@ public class MainActivity extends AppCompatActivity {
         currencyToFlag.setBackgroundResource(Currency.flagsMap.get(currencyTo));
 
         TextView date = (TextView) findViewById(R.id.date);
-        date.setText(sharedPref.getString(getString(R.string.date), getResources().getString(R.string.default_date)));
+        date.setText(PrefsManager.getString(PrefsManager.DATE, ""));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                getSharedPreferences();
                 setViews();
                 calculateOutcome(input);
             }
@@ -255,6 +265,19 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem refreshItem = menu.getItem(0);
+        if (isLoading) {
+            refreshImage.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotation));
+            refreshItem.setActionView(refreshImage);
+        } else {
+            if (refreshImage != null) {
+                refreshImage.clearAnimation();
+                refreshImage.setVisibility(View.GONE);
+                refreshItem.setActionView(null);
+            }
+            refreshItem.collapseActionView();
+            refreshItem.setActionView(null);
+        }
         return true;
     }
 
@@ -280,8 +303,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_update) {
-            CheckDownloadComplete.isDownloadComplete = false;
-            RatesUpdate.update(this);
+            if (!isLoading)
+                ratesUpdater.update(this);
             return true;
         }
 
@@ -315,5 +338,17 @@ public class MainActivity extends AppCompatActivity {
             Log.e("error", e.getMessage());
         }
         return activity;
+    }
+
+    @Override
+    public void onLoadingStarted() {
+        isLoading = true;
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onLoadingFinished() {
+        isLoading = false;
+        invalidateOptionsMenu();
     }
 }

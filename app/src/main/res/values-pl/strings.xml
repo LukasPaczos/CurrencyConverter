@@ -49,4 +49,7 @@
         <item>rand połodniowoafrykański</item>
     </string-array>
     <string name="input_error">Nieprawidłowy format (dostępne tylko cyfry oraz \'.\' jako separator).</string>
+    <string name="update_error">Błąd w trakcie pobierania kursów.</string>
+    <string name="error_try_update">Wystąpił błąd. Spróbuj zaktualizować kursy walut.</string>
+    <string name="no_data_try_update">Brak danych. Spróbuje zaktualizować kursy walut.</string>
 </resources>

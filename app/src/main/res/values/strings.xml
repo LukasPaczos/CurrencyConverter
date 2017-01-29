@@ -59,14 +59,19 @@
     <string name="default_from" translatable="false">GBP</string>
     <string name="default_to" translatable="false">PLN</string>
     <string name="default_date" translatable="false"> </string>
+    <string name="prefs_has_data">has_data</string>
+    <string name="prefs_last_update">last_update</string>
 
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3158356248600163/9999108331</string>
 
     <string name="update_failed_no_internet">Update failed, no Internet connection.</string>
     <string name="update_downloading">Downloading exchange rates.</string>
     <string name="update_error_xml">Error updating exchange rates.(XMLparse)</string>
+    <string name="update_error">Error updating exchange rates.</string>
     <string name="update_error_ioe">Error updating exchange rates.(IOE)</string>
     <string name="update_finished">Update finished.</string>
+    <string name="error_try_update">Error. Try updating exchange rates.</string>
+    <string name="no_data_try_update">No data. Try updating exchange rates.</string>
 
     <string name="content_separating_line">underline</string>
     <string name="content_arrow">swap arrows</string>

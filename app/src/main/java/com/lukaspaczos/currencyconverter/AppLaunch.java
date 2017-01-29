@@ -1,23 +1,35 @@
 package com.lukaspaczos.currencyconverter;
 
 import android.app.Application;
-import android.os.Environment;
 
-import com.lukaspaczos.currencyconverter.currency.Currency;
-
-import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class AppLaunch extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Currency.loadFlags();
-        File xmlFile = new File(Environment.getExternalStorageDirectory().toString() + "/Download/" + RatesUpdate.FILE_NAME);
-        if (xmlFile.exists()) {
-            RatesUpdate.parse(this);
+        PrefsManager.initialize(this);
+        String data = PrefsManager.getString(PrefsManager.DATA, "");
+        String dateString = PrefsManager.getString(PrefsManager.DATE, "");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        Date todayDate = null;
+        try {
+            date = sdf.parse(dateString);
+            todayDate = sdf.parse(new Date().toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (data.isEmpty() || dateString.isEmpty()) {
+            PrefsManager.setBoolean(PrefsManager.UPDATE_SCHEDULED, true);
+        } else if (date != null && todayDate != null && todayDate.after(date)) {
+            PrefsManager.setBoolean(PrefsManager.UPDATE_SCHEDULED, true);
         } else {
-            RatesUpdate.update(this);
+            PrefsManager.setBoolean(PrefsManager.PARSE_SCHEDULED, true);
         }
     }
 }

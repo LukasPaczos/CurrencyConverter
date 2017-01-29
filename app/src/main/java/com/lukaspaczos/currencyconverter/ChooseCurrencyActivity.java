@@ -1,21 +1,19 @@
 package com.lukaspaczos.currencyconverter;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.lukaspaczos.currencyconverter.currency.Currency;
 import com.lukaspaczos.currencyconverter.currency.CurrencyAdapter;
 
 public class ChooseCurrencyActivity extends AppCompatActivity {
 
-    private SharedPreferences sharedPref;
     private static final int CHANGE_FROM = 0;
     public int type;
 
@@ -25,8 +23,6 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_choose_currency);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        sharedPref = this.getSharedPreferences("default_currencies", Context.MODE_PRIVATE);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -47,15 +43,17 @@ public class ChooseCurrencyActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        if (Currency.list.isEmpty())
+            Toast.makeText(this, R.string.error_try_update, Toast.LENGTH_SHORT).show();
+
     }
 
     public void changeCurrency(String newCurrency, int type) {
-        SharedPreferences.Editor editor = sharedPref.edit();
         if (type == CHANGE_FROM) {
-            editor.putString(getString(R.string.preference_from), newCurrency);
+            PrefsManager.setString(PrefsManager.PREFERENCE_FROM, newCurrency);
         } else {
-            editor.putString(getString(R.string.preference_to), newCurrency);
+            PrefsManager.setString(PrefsManager.PREFERENCE_TO, newCurrency);
         }
-        editor.apply();
     }
 }
