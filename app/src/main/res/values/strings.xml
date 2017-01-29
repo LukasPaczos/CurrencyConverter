@@ -59,8 +59,8 @@
     <string name="default_from" translatable="false">GBP</string>
     <string name="default_to" translatable="false">PLN</string>
     <string name="default_date" translatable="false"> </string>
-    <string name="prefs_has_data">has_data</string>
-    <string name="prefs_last_update">last_update</string>
+    <string name="prefs_has_data" translatable="false">has_data</string>
+    <string name="prefs_last_update" translatable="false">last_update</string>
 
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3158356248600163/9999108331</string>
 
