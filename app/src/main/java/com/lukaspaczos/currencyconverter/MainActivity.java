@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
                 calculateOutcome(input);
             }
         });
-        calculateOutcome(input);
     }
 
     @Override
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
             ratesUpdater.update(this);
             PrefsManager.setBoolean(PrefsManager.UPDATE_SCHEDULED, false);
         } else if (PrefsManager.getBoolean(PrefsManager.PARSE_SCHEDULED, false)) {
-            ratesUpdater.parse(this.getApplicationContext());
+            ratesUpdater.parse(this);
             PrefsManager.setBoolean(PrefsManager.PARSE_SCHEDULED, false);
         }
     }
@@ -350,5 +349,6 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
     public void onLoadingFinished() {
         isLoading = false;
         invalidateOptionsMenu();
+        calculateOutcome(input);
     }
 }

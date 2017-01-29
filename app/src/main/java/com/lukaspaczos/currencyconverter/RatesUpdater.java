@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lukaspaczos.currencyconverter.currency.Currency;
@@ -53,7 +54,6 @@ public class RatesUpdater {
 
         public DownloadAsync(Activity activity) {
             this.activity = activity;
-            context = activity.getApplicationContext();
         }
 
         @Override
@@ -94,7 +94,7 @@ public class RatesUpdater {
                 Toast.makeText(context, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
             }
 
-            parse(context);
+            parse(activity);
 
             return null;
 
@@ -102,10 +102,9 @@ public class RatesUpdater {
 
         @Override
         protected void onPostExecute(String uri) {
-            parse(context);
             ((OnLoadingStateChangeListener) activity).onLoadingFinished();
             // TODO: 28-Jan-17 change all those calls to interface
-            Toast.makeText(MainActivity.getActivity(), R.string.update_finished, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.update_finished, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -114,7 +113,7 @@ public class RatesUpdater {
         }
     }
 
-    public void parse(Context context) {
+    public void parse(final Activity activity) {
 
         try {
             String data = PrefsManager.getString(PrefsManager.DATA, "");
@@ -153,14 +152,14 @@ public class RatesUpdater {
             }
 
         } catch (XmlPullParserException e) {
-            Toast.makeText(context, R.string.update_error_xml, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.update_error_xml, Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            Toast.makeText(context, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(context, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
         }
 
-        List<String> longNames = Arrays.asList(context.getResources().getStringArray(R.array.currencies_long));
+        List<String> longNames = Arrays.asList(activity.getResources().getStringArray(R.array.currencies_long));
         int i = 0;
         for (Currency c : Currency.list) {
             if (longNames.get(i) != null) {
@@ -168,6 +167,14 @@ public class RatesUpdater {
             }
             i++;
         }
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView dateTv = (TextView) activity.findViewById(R.id.date);
+                dateTv.setText(PrefsManager.getString(PrefsManager.DATE, ""));
+            }
+        });
     }
 
     private boolean isNetworkAvailable(Context context) {
