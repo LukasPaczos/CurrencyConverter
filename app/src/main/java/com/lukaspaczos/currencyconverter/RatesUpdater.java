@@ -1,13 +1,12 @@
 package com.lukaspaczos.currencyconverter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lukaspaczos.currencyconverter.currency.Currency;
 
@@ -19,13 +18,20 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
 
 public class RatesUpdater {
+
+    private static final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+
     private static RatesUpdater instance;
+    private DownloadAsync downloadAsync;
+
+    private OnLoadingStateChangeListener listener;
 
     public static RatesUpdater getInstance() {
         if (instance == null) {
@@ -34,87 +40,82 @@ public class RatesUpdater {
         return instance;
     }
 
-    public void update(final Activity activity) {
-        final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-
-        if (isNetworkAvailable(activity.getApplicationContext())) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new DownloadAsync(activity).execute(url);
-                }
-            });
-        } else
-            Toast.makeText(activity.getApplicationContext(), R.string.update_failed_no_internet, Toast.LENGTH_SHORT).show();
+    public void update() {
+        update(null);
     }
 
-    private class DownloadAsync extends AsyncTask<String, String, String> {
-        Activity activity;
-        Context context;
+    public void update(final OnLoadingStateChangeListener listener) {
+        this.listener = listener;
+        downloadAsync = new DownloadAsync(listener);
+        downloadAsync.execute();
+    }
 
-        public DownloadAsync(Activity activity) {
-            this.activity = activity;
+    private class DownloadAsync extends AsyncTask<Void, Void, Boolean> {
+
+        public DownloadAsync(OnLoadingStateChangeListener loadingStateChangeListener) {
+            listener = loadingStateChangeListener;
         }
 
         @Override
         protected void onPreExecute() {
-            ((OnLoadingStateChangeListener) activity).onLoadingStarted();
+            if (listener != null)
+                listener.onLoadingStarted();
         }
 
         @Override
-        protected String doInBackground(String[] objects) {
+        protected Boolean doInBackground(Void... params) {
             try {
+                if (!isConnectedToInternet() || !isNetworkAvailable()) {
+                    listener.onError(R.string.update_failed_no_internet);
+                    return false;
+                }
+
                 /*
                  * just to make an impression that some IMPORTANT operations are being done,
                  * also animation looks cooler when it last for more than a couple of milliseconds
                  */
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Toast.makeText(context, R.string.update_error, Toast.LENGTH_SHORT).show();
-            }
-            try {
-                URL url = new URL(objects[0]);
-                URLConnection connection = url.openConnection();
+
+                URL myUrl = new URL(url);
+                URLConnection connection = myUrl.openConnection();
                 connection.connect();
 
                 int lengthOfFile = connection.getContentLength();
                 Log.d("CurrencyConverter", "Length of file: " + lengthOfFile);
 
-                InputStream input = new BufferedInputStream(url.openStream());
+                InputStream input = new BufferedInputStream(myUrl.openStream());
                 java.util.Scanner s = new java.util.Scanner(input).useDelimiter("\\A");
-                String xml =  s.hasNext() ? s.next() : "";
+                String xml = s.hasNext() ? s.next() : "";
                 if (xml.isEmpty())
                     throw new Exception();
 
                 PrefsManager.setString(PrefsManager.DATA, xml);
 
                 input.close();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                if (listener != null)
+                    listener.onError(R.string.update_error);
+
+                return false;
             } catch (Exception e) {
-                Toast.makeText(context, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
+                if (listener != null)
+                    listener.onError(R.string.update_error_ioe);
+
+                return false;
             }
 
-            parse(activity);
-
-            return null;
-
+            return parse();
         }
 
         @Override
-        protected void onPostExecute(String uri) {
-            ((OnLoadingStateChangeListener) activity).onLoadingFinished();
-            // TODO: 28-Jan-17 change all those calls to interface
-            Toast.makeText(activity, R.string.update_finished, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
+        protected void onPostExecute(Boolean object) {
+            if (listener != null && object != null && object)
+                listener.onLoadingFinished();
         }
     }
 
-    public void parse(final Activity activity) {
-
+    public boolean parse() {
         try {
             String data = PrefsManager.getString(PrefsManager.DATA, "");
             if (data.isEmpty())
@@ -152,14 +153,23 @@ public class RatesUpdater {
             }
 
         } catch (XmlPullParserException e) {
-            Toast.makeText(activity, R.string.update_error_xml, Toast.LENGTH_SHORT).show();
+            if (listener != null)
+                listener.onError(R.string.update_error_xml);
+
+            return false;
         } catch (IOException e) {
-            Toast.makeText(activity, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
+            if (listener != null)
+                listener.onError(R.string.update_error_ioe);
+
+            return false;
         } catch (Exception e) {
-            Toast.makeText(activity, R.string.update_error_ioe, Toast.LENGTH_SHORT).show();
+            if (listener != null)
+                listener.onError(R.string.update_error_ioe);
+
+            return false;
         }
 
-        List<String> longNames = Arrays.asList(activity.getResources().getStringArray(R.array.currencies_long));
+        List<String> longNames = Arrays.asList(App.getContext().getResources().getStringArray(R.array.currencies_long));
         int i = 0;
         for (Currency c : Currency.list) {
             if (longNames.get(i) != null) {
@@ -168,19 +178,27 @@ public class RatesUpdater {
             i++;
         }
 
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView dateTv = (TextView) activity.findViewById(R.id.date);
-                dateTv.setText(PrefsManager.getString(PrefsManager.DATE, ""));
-            }
-        });
+        return true;
     }
 
-    private boolean isNetworkAvailable(Context context) {
+    private boolean isConnectedToInternet() {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private boolean isNetworkAvailable() {
+        try {
+            HttpURLConnection urlc = (HttpURLConnection)
+                    (new URL("http://clients3.google.com/generate_204")
+                            .openConnection());
+
+            return (urlc.getResponseCode() == 204 && urlc.getContentLength() == 0);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -7,14 +7,11 @@ import android.content.SharedPreferences;
 public class PrefsManager {
     private static final String PREFS_NAME = "currency_converter";
     public static final String  DATA = "data";
-    public static final String  LAST_UPDATE = "last_update";
     public static final String  PREFERENCE_FROM = "preference_from";
     public static final String  PREFERENCE_TO = "preference_to";
     public static final String  DATE = "date";
     public static final String  DEFAULT_FROM = "EUR";
     public static final String  DEFAULT_TO = "USD";
-    public static final String  UPDATE_SCHEDULED = "update_scheduled";
-    public static final String  PARSE_SCHEDULED = "parse_scheduled";
 
     private static SharedPreferences sharedPreferences;
 

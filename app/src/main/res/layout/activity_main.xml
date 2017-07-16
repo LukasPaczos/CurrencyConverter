@@ -23,14 +23,15 @@
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/adLayout"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_height="wrap_content">
 
             <com.google.android.gms.ads.AdView
                 android:id="@+id/adView"
@@ -42,206 +43,222 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/main_pane"
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_height="match_parent"
+            android:layout_above="@id/adLayout"
+            android:layout_alignParentTop="true">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:gravity="center"
-                android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/layout_from"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/main_pane"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
 
-                    <RelativeLayout
-                        android:layout_width="60dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginRight="4dp"
-                        android:clipToPadding="false"
-                        android:padding="4dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/layout_from"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="60dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="4dp"
+                                android:layout_marginRight="4dp"
+                                android:clipToPadding="false"
+                                android:padding="4dp">
+
+                                <ImageView
+                                    android:id="@+id/currency_from_flag"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:adjustViewBounds="true"
+                                    android:contentDescription="@string/image_description"
+                                    android:elevation="4dp" />
+
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/currency_from"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:shadowColor="@android:color/darker_gray"
+                                android:shadowDx="1.0"
+                                android:shadowDy="3.0"
+                                android:shadowRadius="7.0"
+                                android:text="@string/currency_usd_short"
+                                android:textAlignment="center"
+                                android:textColor="@android:color/black"
+                                android:textSize="30sp" />
+
+                        </LinearLayout>
 
                         <ImageView
-                            android:id="@+id/currency_from_flag"
+                            android:id="@+id/swap_currencies"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="8dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:contentDescription="@string/content_arrow"
+                            android:src="@drawable/ic_import_export_black_52px" />
+
+                        <LinearLayout
+                            android:id="@+id/layout_to"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="60dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="4dp"
+                                android:layout_marginRight="4dp"
+                                android:clipToPadding="false"
+                                android:padding="4dp">
+
+                                <ImageView
+                                    android:id="@+id/currency_to_flag"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:adjustViewBounds="true"
+                                    android:contentDescription="@string/image_description"
+                                    android:elevation="4dp" />
+
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/currency_to"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:shadowColor="@android:color/darker_gray"
+                                android:shadowDx="1.0"
+                                android:shadowDy="3.0"
+                                android:shadowRadius="7.0"
+                                android:text="@string/currency_euro_short"
+                                android:textAlignment="center"
+                                android:textColor="@android:color/black"
+                                android:textSize="30sp" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <me.grantland.widget.AutofitTextView
+                            android:id="@+id/currency_starting"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:shadowColor="@android:color/darker_gray"
+                            android:shadowDx="1.0"
+                            android:shadowDy="3.0"
+                            android:shadowRadius="7.0"
+                            android:text="0.00"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="25sp"
+                            ads:minTextSize="16sp" />
+
+                        <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:adjustViewBounds="true"
-                            android:contentDescription="@string/image_description"
-                            android:elevation="4dp" />
+                            android:contentDescription="@string/content_separating_line"
+                            android:src="@drawable/ic_remove_black_288x12dp" />
 
-                    </RelativeLayout>
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="1" />
+
+                        <me.grantland.widget.AutofitTextView
+                            android:id="@+id/currency_outcome"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:shadowColor="@android:color/darker_gray"
+                            android:shadowDx="1.0"
+                            android:shadowDy="3.0"
+                            android:shadowRadius="7.0"
+                            android:text="0.00"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="40sp"
+                            ads:minTextSize="16sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/main_pane"
+                    android:layout_margin="6dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/currency_from"
+                        android:id="@+id/textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:shadowColor="@android:color/darker_gray"
                         android:shadowDx="1.0"
                         android:shadowDy="3.0"
                         android:shadowRadius="7.0"
-                        android:text="@string/currency_usd_short"
-                        android:textAlignment="center"
+                        android:text="@string/footer"
                         android:textColor="@android:color/black"
-                        android:textSize="30sp" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/swap_currencies"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:contentDescription="@string/content_arrow"
-                    android:src="@drawable/ic_import_export_black_52px" />
-
-                <LinearLayout
-                    android:id="@+id/layout_to"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RelativeLayout
-                        android:layout_width="60dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginRight="4dp"
-                        android:clipToPadding="false"
-                        android:padding="4dp">
-
-                        <ImageView
-                            android:id="@+id/currency_to_flag"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:adjustViewBounds="true"
-                            android:contentDescription="@string/image_description"
-                            android:elevation="4dp" />
-
-                    </RelativeLayout>
+                        android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/currency_to"
+                        android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
                         android:shadowColor="@android:color/darker_gray"
                         android:shadowDx="1.0"
                         android:shadowDy="3.0"
                         android:shadowRadius="7.0"
-                        android:text="@string/currency_euro_short"
-                        android:textAlignment="center"
                         android:textColor="@android:color/black"
-                        android:textSize="30sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
+            </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-                <me.grantland.widget.AutofitTextView
-                    android:id="@+id/currency_starting"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:maxLines="1"
-                    android:shadowColor="@android:color/darker_gray"
-                    android:shadowDx="1.0"
-                    android:shadowDy="3.0"
-                    android:shadowRadius="7.0"
-                    android:text="0.00"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="25sp"
-                    ads:minTextSize="16sp" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/content_separating_line"
-                    android:src="@drawable/ic_remove_black_288x12dp" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1" />
-
-                <me.grantland.widget.AutofitTextView
-                    android:id="@+id/currency_outcome"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:maxLines="1"
-                    android:shadowColor="@android:color/darker_gray"
-                    android:shadowDx="1.0"
-                    android:shadowDy="3.0"
-                    android:shadowRadius="7.0"
-                    android:text="0.00"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="40sp"
-                    ads:minTextSize="16sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/main_pane"
-            android:layout_margin="6dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:shadowColor="@android:color/darker_gray"
-                android:shadowDx="1.0"
-                android:shadowDy="3.0"
-                android:shadowRadius="7.0"
-                android:text="@string/footer"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:shadowColor="@android:color/darker_gray"
-                android:shadowDx="1.0"
-                android:shadowDy="3.0"
-                android:shadowRadius="7.0"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-
-        </LinearLayout>
+        </ScrollView>
 
     </RelativeLayout>
-
 
 </android.support.design.widget.CoordinatorLayout>

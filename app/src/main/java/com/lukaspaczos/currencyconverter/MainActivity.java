@@ -46,6 +46,16 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
     private boolean isLoading = false;
     private ImageView refreshImage;
 
+    AutofitTextView amountOutcome;
+    AutofitTextView amountFrom;
+    TextView currencyFromTv;
+    LinearLayout currencyFromLayout;
+    TextView currencyToTv;
+    LinearLayout currencyToLayout;
+    ImageView currencyFromFlag;
+    ImageView currencyToFlag;
+    TextView dateTv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,10 +71,19 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
+        amountOutcome = (AutofitTextView) findViewById(R.id.currency_outcome);
+        amountFrom = (AutofitTextView) findViewById(R.id.currency_starting);
+        currencyFromTv = (TextView) findViewById(R.id.currency_from);
+        currencyFromLayout = (LinearLayout) findViewById(R.id.layout_from);
+        currencyToTv = (TextView) findViewById(R.id.currency_to);
+        currencyToLayout = (LinearLayout) findViewById(R.id.layout_to);
+        currencyFromFlag = (ImageView) findViewById(R.id.currency_from_flag);
+        currencyToFlag = (ImageView) findViewById(R.id.currency_to_flag);
+        dateTv = (TextView) findViewById(R.id.date);
+
         setViews();
 
-        AutofitTextView startingAmount = (AutofitTextView) findViewById(R.id.currency_starting);
-        startingAmount.setOnClickListener(new View.OnClickListener() {
+        amountFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
@@ -102,8 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
                                     if (c != '.') {
                                         wrongCharFlag = true;
                                         break;
-                                    }
-                                    else if (++dotsCount > 1) {
+                                    } else if (++dotsCount > 1) {
                                         wrongCharFlag = true;
                                         break;
                                     }
@@ -138,30 +156,21 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
                 calculateOutcome(input);
             }
         });
+
+        if (savedInstanceState == null)
+            ratesUpdater.update(this);
     }
 
     @Override
     protected void onPause() {
-        adView.pause();
         super.onPause();
+        adView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         adView.resume();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (PrefsManager.getBoolean(PrefsManager.UPDATE_SCHEDULED, false)) {
-            ratesUpdater.update(this);
-            PrefsManager.setBoolean(PrefsManager.UPDATE_SCHEDULED, false);
-        } else if (PrefsManager.getBoolean(PrefsManager.PARSE_SCHEDULED, false)) {
-            ratesUpdater.parse(this);
-            PrefsManager.setBoolean(PrefsManager.PARSE_SCHEDULED, false);
-        }
     }
 
     @Override
@@ -204,9 +213,7 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
         double inputInEuro = input / rateFrom;
         double outcome = inputInEuro * rateTo;
 
-        AutofitTextView amountFrom = (AutofitTextView) findViewById(R.id.currency_starting);
         amountFrom.setText(String.format(Locale.US, "%.2f", input));
-        AutofitTextView amountOutcome = (AutofitTextView) findViewById(R.id.currency_outcome);
         amountOutcome.setText(String.format(Locale.US, "%.2f", outcome));
 
         if (PrefsManager.getString(PrefsManager.DATA, "").isEmpty())
@@ -216,9 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
     private void setViews() {
         currencyFrom = PrefsManager.getString(PrefsManager.PREFERENCE_FROM, PrefsManager.DEFAULT_FROM);
         currencyTo = PrefsManager.getString(PrefsManager.PREFERENCE_TO, PrefsManager.DEFAULT_TO);
-        TextView currencyFromTv = (TextView) findViewById(R.id.currency_from);
         currencyFromTv.setText(currencyFrom);
-        LinearLayout currencyFromLayout = (LinearLayout) findViewById(R.id.layout_from);
         currencyFromLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -228,9 +233,7 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
             }
         });
 
-        TextView currencyToTv = (TextView) findViewById(R.id.currency_to);
         currencyToTv.setText(currencyTo);
-        LinearLayout currencyToLayout = (LinearLayout) findViewById(R.id.layout_to);
         currencyToLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -240,14 +243,10 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
             }
         });
 
-        ImageView currencyFromFlag = (ImageView) findViewById(R.id.currency_from_flag);
         currencyFromFlag.setBackgroundResource(Currency.flagsMap.get(currencyFrom));
-
-        ImageView currencyToFlag = (ImageView) findViewById(R.id.currency_to_flag);
         currencyToFlag.setBackgroundResource(Currency.flagsMap.get(currencyTo));
 
-        TextView date = (TextView) findViewById(R.id.date);
-        date.setText(PrefsManager.getString(PrefsManager.DATE, ""));
+        dateTv.setText(PrefsManager.getString(PrefsManager.DATE, ""));
     }
 
     @Override
@@ -350,5 +349,20 @@ public class MainActivity extends AppCompatActivity implements OnLoadingStateCha
         isLoading = false;
         invalidateOptionsMenu();
         calculateOutcome(input);
+
+        dateTv.setText(PrefsManager.getString(PrefsManager.DATE, ""));
+        Toast.makeText(this, R.string.update_finished, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(final int stringRes) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                isLoading = false;
+                invalidateOptionsMenu();
+                Toast.makeText(MainActivity.this, stringRes, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
